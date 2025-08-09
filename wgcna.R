@@ -12,14 +12,14 @@ library(enrichplot)
 library(DOSE)
 library(ReactomePA)
 
-output_dir <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/soft_threshold_6"
+output_dir <- "vaishnavi/thesis/vaishhnavi_master-thesis/soft_threshold_6"
 
 # Set options
 options(stringsAsFactors = FALSE)
 enableWGCNAThreads()
 
 # Load the vst_data.csv file
-file_path <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/vaishnavi_masterthesis/vst_data.csv"
+file_path <- "vaishnavi/vaishnavi_masterthesis/vst_data.csv"
 cat("Loading data from:", file_path, "\n")
 wgcna_data <- read.csv(file = file_path, stringsAsFactors = FALSE, header = TRUE)
 
@@ -165,7 +165,7 @@ cat("Saved full gene-to-module color mapping to: Gene_to_ModuleColor.csv\n")
 
 #----------------------- Metadta introduced -----------------------#
 # Module trait relationship analysis
-metadata_path <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/filteredmetadatamasters.csv"
+metadata_path <- "vaishnavi/thesis/vaishhnavi_master-thesis/filteredmetadatamasters.csv"
 cat("Loading metadata from:", metadata_path, "\n")
 metadata <- read.csv(metadata_path, header = TRUE, stringsAsFactors = FALSE)
 head(metadata)
