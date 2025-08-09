@@ -13,12 +13,12 @@ library(Matrix)
 library(pheatmap)
 
 # INPUT / OUTPUT FILE PATHS
-vst_file <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/vst_data.csv"
-TF_file <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/TF_list.txt"
-output_dir <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/genie3_res"
-wgcna_file <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/soft_threshold_6/Gene_to_ModuleColor.csv"
-genie3_file <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/genie3_res/genie3_link_list.csv"
-louvain_file <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/genie3_res/louvain_clusters_resolution_2_1.txt"
+vst_file <- "vaishnavi/thesis/vaishhnavi_master-thesis/vst_data.csv"
+TF_file <- "vaishnavi/thesis/vaishhnavi_master-thesis/TF_list.txt"
+output_dir <- "vaishnavi/thesis/vaishhnavi_master-thesis/genie3_res"
+wgcna_file <- "vaishnavi/thesis/vaishhnavi_master-thesis/soft_threshold_6/Gene_to_ModuleColor.csv"
+genie3_file <- "vaishnavi/thesis/vaishhnavi_master-thesis/genie3_res/genie3_link_list.csv"
+louvain_file <- "vaishnavi/thesis/vaishhnavi_master-thesis/genie3_res/louvain_clusters_resolution_2_1.txt"
 
 if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
 
