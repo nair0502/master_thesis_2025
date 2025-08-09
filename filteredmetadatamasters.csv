@@ -1,0 +1,66 @@
+run, timepoint (hours), treated, pathogen_full name, interaction, tissue, pathogen
+SRR16643549,1008,lncRNA-seq of AMF infected roots,arbuscular mycorrhizal,Symbiotic,root, AM-sym-Fungus
+SRR16643548,1008,lncRNA-seq of AMF infected roots,arbuscular mycorrhizal,Symbiotic,root, AM-sym-Fungus
+SRR16643547,1008,lncRNA-seq of AMF infected roots,arbuscular mycorrhizal,Symbiotic,root, AM-sym-Fungus
+SRR16643552,1008,lncRNA-seq of AMF not infected roots,arbuscular mycorrhizal,Wild type,root,WT
+SRR16643551,1008,lncRNA-seq of AMF not infected roots,arbuscular mycorrhizal,Wild type,root,WT
+SRR16643550,1008,lncRNA-seq of AMF not infected roots,arbuscular mycorrhizal,Wild type,root,WT
+SRR17235452,264, Roots from plants treated with fungal spore suspension,Serendipita indica,Symbiotic,root, SI-sym-Fungus
+SRR17235453,264,Roots from plants treated with water,Serendipita indica,Wild type,root,WT
+SRR17235454,264,Leaves from plants treated with fungal spore suspension,Serendipita indica,Symbiotic,leaf, SI-sym-Fungus
+SRR17235455,264,Leaves from plants treated with water,Serendipita indica,Wild type,leaf,WT
+SRR5679560,1461,tomato+funnellifomis mosseae,Funneliformis mosseae,Symbiotic,leaf, FM-sym-Fungus
+SRR5679561,1461,tomato+funnellifomis mosseae,Funneliformis mosseae,Symbiotic,leaf, FM-sym-Fungus
+SRR5679565,1461,tomato+funnellifomis mosseae,Funneliformis mosseae,Symbiotic,leaf, FM-sym-Fungus
+SRR5679557,1461,tomato control,Funneliformis mosseae + Cucumber Mosaic Virus,Wild type,leaf,WT
+SRR5679558,1461,tomato control,Funneliformis mosseae + Cucumber Mosaic Virus,Wild type,leaf,WT
+SRR5679559,1461,tomato control,Funneliformis mosseae + Cucumber Mosaic Virus,Wild type,leaf,WT
+SRR5679562,672,tomato+ cucumber mosaic virus,Cucumber Mosaic Virus,Biotrophic,leaf, CMV-bio-Viral
+SRR5679563,672,tomato+ cucumber mosaic virus,Cucumber Mosaic Virus,Biotrophic,leaf, CMV-bio-Viral
+SRR5679556,672,tomato+ cucumber mosaic virus,Cucumber Mosaic Virus,Biotrophic,leaf, CMV-bio-Viral
+SRR18426570,0,0 dpi susceptible biological replicate 1,Cladosporium fulvum,Wild type,leaf,WT
+SRR18426585,0,0 dpi susceptible biological replicate 2,Cladosporium fulvum,Wild type,leaf,WT
+SRR18426584,0,0 dpi susceptible biological replicate 3,Cladosporium fulvum,Wild type,leaf,WT
+SRR18426583,216,9 dpi susceptible biological replicate 1,Cladosporium fulvum,Biotrophic,leaf, CF-bio-Fungus
+SRR18426582,216,9 dpi susceptible biological replicate 2,Cladosporium fulvum,Biotrophic,leaf, CF-bio-Fungus
+SRR18426581,216,9 dpi susceptible biological replicate 3,Cladosporium fulvum,Biotrophic,leaf, CF-bio-Fungus
+SRR18426580,360,15 dpi susceptible biological replicate 1,Cladosporium fulvum,Biotrophic,leaf, CF-bio-Fungus
+SRR18426579,360,15 dpi susceptible biological replicate 2,Cladosporium fulvum,Biotrophic,leaf, CF-bio-Fungus
+SRR18426578,360,15 dpi susceptible biological replicate 3,Cladosporium fulvum,Biotrophic,leaf, CF-bio-Fungus
+SRR28479822,24,Inoculated _ rep1,Meloidogyne incognita,Biotrophic,root (seedling), MI-bio-Nematode
+SRR28479823,24,Inoculated _ rep2,Meloidogyne incognita,Biotrophic,root (seedling), MI-bio-Nematode
+SRR28479824,24,Inoculated _ rep3,Meloidogyne incognita,Biotrophic,root (seedling), MI-bio-Nematode
+SRR28479825,24,control,Meloidogyne incognita,Wild type,root (seedling),WT
+SRR28479826,24,control,Meloidogyne incognita,Wild type,root (seedling),WT
+SRR28479827,24,control,Meloidogyne incognita,Wild type,root (seedling),WT
+SRR4048988,144,tomato (for OnM2),Oidium neolycopersici-powdery mildew,Biotrophic,leaf, ON-bio-Fungus
+SRR4048989,144,tomato (for OnM2),Oidium neolycopersici-powdery mildew,Biotrophic,leaf, ON-bio-Fungus
+SRR4048990,144,tomato (for OnM2),Oidium neolycopersici-powdery mildew,Biotrophic,leaf, ON-bio-Fungus
+SRR19164834,12,Mock tomato 12 h,Botrytis cinerea,Wild type,leaf,WT
+SRR8074946,12,Mock tomato 12 h,Botrytis cinerea,Wild type,leaf,WT
+SRR8074951,12,Mock tomato 12 h,Botrytis cinerea,Wild type,leaf,WT
+SRR19164833,16,Mock tomato 16 h,Botrytis cinerea,Wild type,leaf,WT
+SRR8074944,16,Mock tomato 16 h,Botrytis cinerea,Wild type,leaf,WT
+SRR8074947,16,Mock tomato 16 h,Botrytis cinerea,Wild type,leaf,WT
+SRR23048700,24,Mock tomato 24 h,Botrytis cinerea,Wild type,leaf,WT
+SRR8074945,24,Mock tomato 24 h,Botrytis cinerea,Wild type,leaf,WT
+SRR8074942,24,Mock tomato 24 h,Botrytis cinerea,Wild type,leaf,WT
+SRR8074956,12,B.cinerea-tomato 12 h,Botrytis cinerea,necrotrophic,leaf, BC-nec-Fungus
+SRR8074958,12,B.cinerea-tomato 12 h,Botrytis cinerea,necrotrophic,leaf, BC-nec-Fungus
+SRR8074959,12,B.cinerea-tomato 12 h,Botrytis cinerea,necrotrophic,leaf, BC-nec-Fungus
+SRR8074957,16,B.cinerea-tomato 16 h,Botrytis cinerea,necrotrophic,leaf, BC-nec-Fungus
+SRR8074954,16,B.cinerea-tomato 16 h,Botrytis cinerea,necrotrophic,leaf, BC-nec-Fungus
+SRR8074955,16,B.cinerea-tomato 16 h,Botrytis cinerea,necrotrophic,leaF, BC-nec-Fungus
+SRR8074950,24,B.cinerea-tomato 24 h,Botrytis cinerea,necrotrophic,leaf, BC-nec-Fungus
+SRR8074952,24,B.cinerea-tomato 24 h,Botrytis cinerea,necrotrophic,leaf, BC-nec-Fungus
+SRR8074953,24,B.cinerea-tomato 24 h,Botrytis cinerea,necrotrophic,leaf, BC-nec-Fungus
+SRR23959357,0,biological replicate 1 of 0h control,drought stress,Wild type,leaf,WT
+SRR23959356,0,biological replicate 2 of 0h control,drought stress,Wild type,leaf,WT
+SRR23959355,0,biological replicate 3 of 0h control,drought stress,Wild type,leaf,WT
+SRR23959354,2,",biological replicate 1 of 2h dehydration",drought stress,drought,leaf, D
+SRR23959353,2,",biological replicate 2 of 2h dehydration",drought stress,drought,leaf,D
+SRR23959352,2,",biological replicate 3 of 2h dehydration",drought stress,drought,leaf,D
+SRR23959351,4,biological replicate 1 of 4h dehydration,drought stress,drought,leaf,D
+SRR23959350,4,biological replicate 2 of 4h dehydration,drought stress,drought,leaf,D
+SRR23959349,4,biological replicate 3 of 4h dehydration,drought stress,drought,leaf,D
+
