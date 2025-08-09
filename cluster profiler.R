@@ -10,9 +10,9 @@ library(readr)
 library(igraph)
 library(ggraph)
 
-input_file <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/module_files/solanum_proteins.results.txt"
-module <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/module_files/turquoise.txt"
-output_dir_enrichment <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/enrichments_wgcna/turquoise"
+input_file <- "vaishnavi/thesis/vaishhnavi_master-thesis/module_files/solanum_proteins.results.txt"
+module <- "vaishnavi/thesis/vaishhnavi_master-thesis/module_files/turquoise.txt"
+output_dir_enrichment <- "vaishnavi/thesis/vaishhnavi_master-thesis/enrichments_wgcna/turquoise"
 
 
 # ----------------------------
