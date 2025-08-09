@@ -4,9 +4,9 @@
 export PATH=$PATH:/dss/dsshome1/08/ge85jek2/miniconda3/envs/ncbi/bin/kallisto
 
 # Input files and output directory
-index_path="/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/vaishnavi_masterthesis/tomato_index.idx"
-input_dir="/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/vaishnavi_masterthesis/trimmed"
-output_dir="/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/vaishnavi_masterthesis/kallisto_output"
+index_path="vaishnavi/vaishnavi_masterthesis/tomato_index.idx"
+input_dir="vaishnavi/vaishnavi_masterthesis/trimmed"
+output_dir="vaishnavi/vaishnavi_masterthesis/kallisto_output"
 log_file="${output_dir}/kallisto_log.txt"
 
 # Ensure output directory exists
