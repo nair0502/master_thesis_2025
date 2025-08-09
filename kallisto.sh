@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Add Kallisto to the PATH
-export PATH=$PATH:/dss/dsshome1/08/ge85jek2/miniconda3/envs/ncbi/bin/kallisto
+export PATH=$PATH:/miniconda3/envs/ncbi/bin/kallisto
 
 # Input files and output directory
 index_path="vaishnavi/vaishnavi_masterthesis/tomato_index.idx"
