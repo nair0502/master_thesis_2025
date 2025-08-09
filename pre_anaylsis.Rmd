@@ -1,0 +1,459 @@
+---
+title: "WGCNA Analysis"
+author: "Vaishnavi"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: 
+    toc: true
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Load Libraries
+
+```{r load-libraries}
+library(readr)
+library(DESeq2)
+library(ggplot2)
+library(RColorBrewer)
+library(EnhancedVolcano)
+library(pheatmap)
+library(dplyr)
+library(cluster)
+library(tidyverse)
+library(ggfortify)
+library(ggforce)
+library(tximport)
+library(GenomicFeatures)
+library(data.table)
+library(rhdf5)
+library(tximportData)
+library(rtracklayer)
+library(WGCNA)
+library(flashClust)
+```
+
+# Set Directories
+
+```{r set-directories}
+setwd("/home/vaishnavi/Desktop/")
+kallisto_output_path <- "/home/vaishnavi/Desktop/kallisto_output/"
+```
+
+# List Files and Extract Sample Names
+
+```{r list-files}
+files <- list.files(
+  path = kallisto_output_path, 
+  pattern = "abundance.h5", 
+  full.names = TRUE, 
+  recursive = TRUE
+)
+sample_names <- basename(dirname(files))
+names(files) <- sample_names
+```
+
+# Import GFF File and Create `tx2gene` Mapping
+
+```{r import-gff}
+gff_file <- "/home/vaishnavi/Desktop/ITAG3.2_gene_models.gff"
+gff_data <- import(gff_file)
+transcripts <- gff_data[gff_data$type == "mRNA", ]
+genes <- gff_data[gff_data$type == "gene", ]
+tx2gene <- data.frame(
+  TXNAME = transcripts$ID,  
+  GENEID = transcripts$Parent  
+)
+write.table(tx2gene, file = "tx2gene.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
+```
+
+# Import Kallisto Data
+
+```{r tximport}
+txi.kallisto <- tximport(files, type = "kallisto", txOut = TRUE, tx2gene = tx2gene)
+tpm_matrix <- txi.kallisto$abundance
+write.csv(tpm_matrix, "tpm_matrix.csv", row.names = TRUE)
+counts_matrix <- txi.kallisto$counts
+write.csv(counts_matrix, "counts_matrix.csv", row.names = TRUE)
+```
+
+# Metadata Preparation
+
+```{r metadata-preparation}
+metadata <- read.csv("filteredmetadatamasters.csv")
+metadata$treatment_group <- ifelse(metadata$timepoint == 0, "pathogen", "interaction")
+```
+
+# TPM Matrix Preparation
+
+```{r tpm-preparation}
+tpm_matrix <- read.csv("tpm_matrix.csv")  
+tpm_matrix <- as.data.frame(tpm_matrix) 
+tpm_matrix_numeric <- tpm_matrix[, sapply(tpm_matrix, is.numeric)]
+tpm_matrix_numeric_filtered <- tpm_matrix_numeric[apply(tpm_matrix_numeric, 1, var) != 0, ]
+```
+
+# PCA Analysis on Unfiltered Data
+
+```{r pca-unfiltered}
+pca_results_unfilter <- prcomp(t(tpm_matrix_numeric_filtered), scale. = TRUE, center = TRUE)
+pathogen_colors <- c(
+  "Trichoderma harzianum" = "#1f77b4",  # Blue
+  "arbuscular mycorrhizal" = "#ff7f0e",  # Orange
+  "Serendipita indica" = "#2ca02c",  # Green
+  "Funneliformis mosseae" = "#d62728",  # Red
+  "Funneliformis mosseae + Cucumber Mosaic Virus" = "#9467bd",  # Purple
+  "Cucumber Mosaic Virus" = "#8c564b",  # Brown
+  "Cladosporium fulvum" = "#e377c2",  # Pink
+  "Meloidogyne incognita" = "#7f7f7f",  # Gray
+  "tomato spotted wilt virus" = "#bcbd22",  # Yellow-green
+  "Erysiphe neolycopersici / Oidium neolycopersici-powdery mildew" = "#17becf",  # Cyan
+  "Botrytis cinerea" = "#ff9896",  # Light Red
+  "drought stress" = "#c5b0d5"  # Lavender
+)
+
+ggplot(data = as.data.frame(pca_results_unfilter$x), aes(x = PC1, y = PC2)) +
+  geom_point(aes(color = metadata$pathogen, shape = metadata$interaction), size = 2) +  
+  geom_mark_ellipse(aes(color = metadata$pathogen), alpha = 0.2, label.fill = NA) + 
+  coord_cartesian(xlim = c(-200, 200), ylim = c(-200, 200)) +  
+  labs(
+    title = "PCA Plot of Unfiltered TPM Matrix",
+    x = paste0("PC1 (", round(summary(pca_results_unfilter)$importance[2, 1] * 100, 2), "%)"),
+    y = paste0("PC2 (", round(summary(pca_results_unfilter)$importance[2, 2] * 100, 2), "%)"),
+    color = "Pathogen",
+    shape = "Interaction"
+  ) +
+  scale_color_manual(values = pathogen_colors) +  # Set distinct colors
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(size = 12),
+    axis.title = element_text(size = 10),
+    axis.text = element_text(size = 8)
+  )
+```
+
+# Filtered TPM Matrix and PCA Analysis
+
+```{r setting the filtered TPM matrix}
+filtered_tpm_matrix <- tpm_matrix_numeric_filtered
+filtered_tpm_matrix[filtered_tpm_matrix < 0.5] <- 0  # TPM >= 0.5
+keep_genes <- rowSums(filtered_tpm_matrix > 0) > 0
+filtered_tpm_matrix <- filtered_tpm_matrix[keep_genes, ]
+pca_results_filtered <- prcomp(t(filtered_tpm_matrix), center = TRUE, scale. = TRUE)
+```
+
+# Filtered TPM Matrix PCA
+
+```{r pca-filtered}
+ggplot(data = as.data.frame(pca_results_filtered$x), aes(x = PC1, y = PC2)) +
+  geom_point(aes(color = metadata$pathogen, shape = metadata$interaction), size = 2) +  
+  geom_mark_ellipse(aes(color = metadata$pathogen), alpha = 0.2, label.fill = NA) + 
+  coord_cartesian(xlim = c(-200, 200), ylim = c(-200, 200)) +
+  labs(
+    title = "PCA Plot of Filtered TPM Matrix",
+    x = paste0("PC1 (", round(summary(pca_results_filtered)$importance[2, 1] * 100, 2), "%)"),
+    y = paste0("PC2 (", round(summary(pca_results_filtered)$importance[2, 2] * 100, 2), "%)"),
+    color = "Pathogen",
+    shape = "Interaction"
+  ) +
+  scale_color_manual(values = pathogen_colors) +  
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(size = 12),
+    axis.title = element_text(size = 10),
+    axis.text = element_text(size = 8)
+  )
+```
+
+# Scree Plot
+
+```{r scree-plot}
+variance_explained <- pca_results_filtered$sdev^2 / sum(pca_results_filtered$sdev^2)
+variance_explained_subset <- variance_explained[1:4]
+variance_df <- data.frame(PC = paste0("PC", 1:4), Variance = variance_explained_subset)
+ggplot(variance_df, aes(x = PC, y = Variance)) +
+  geom_bar(stat = "identity", fill = "#9467bd") +  
+  xlab("Principal Component") +
+  ylab("Variance Explained") +
+  ggtitle("Scree Plot - PC1 to PC4") +
+  ylim(0, 1)
+```
+
+# Count matrix
+
+```{r setting the count matrix}
+count_matrix <- read.csv("counts_matrix.csv")
+count_matrix <- as.data.frame(count_matrix)
+filtered_count_matrix <- count_matrix[, sapply(count_matrix, is.numeric)]
+filtered_count_matrix <- round(filtered_count_matrix)
+#doing this ensures the metadata and count table has the same row names: 
+rownames(metadata) <- metadata$run
+metadata$run <- NULL  # Remove 'run' column as it's now in the row names
+common_samples <- intersect(colnames(filtered_count_matrix), rownames(metadata))
+# Subset both the metadata and filtered_count_matrix to only include common samples
+filtered_count_matrix <- filtered_count_matrix[, common_samples]
+metadata <- metadata[common_samples, ]
+# Check the names of aligned columns in the count matrix and rows in the metadata
+cat("Aligned column names of filtered_count_matrix:\n", colnames(filtered_count_matrix), "\n")
+cat("Aligned row names of metadata:\n", rownames(metadata), "\n")
+```
+
+# Run DESeq2
+
+```{r deseq2-analysis}
+dds <- DESeqDataSetFromMatrix(countData = filtered_count_matrix, colData = metadata, design = ~ pathogen + interaction)
+dds <- DESeq(dds)
+res <- results(dds, alpha = 0.01)
+```
+
+# VST
+
+```{r VST data}
+vsd <- vst(dds, blind = FALSE)
+variable_genes <- head(order(rowVars(assay(vsd)), decreasing = TRUE), 20)
+mat <- assay(vsd)[variable_genes, ]
+mat <- mat - rowMeans(mat)
+```
+
+# VST PCA
+
+```{r VST data plotted as PCA}
+pca_results <- prcomp(t(assay(vsd)))  
+pca_data <- as.data.frame(pca_results$x)
+# Define pathogen colors
+pathogen_colors <- c(
+  "Trichoderma harzianum" = "#1f77b4",  # Blue
+  "arbuscular mycorrhizal" = "#ff7f0e",  # Orange
+  "Serendipita indica" = "#2ca02c",  # Green
+  "Funneliformis mosseae" = "#d62728",  # Red
+  "Funneliformis mosseae + Cucumber Mosaic Virus" = "#9467bd",  # Purple
+  "Cucumber Mosaic Virus" = "#8c564b",  # Brown
+  "Cladosporium fulvum" = "#e377c2",  # Pink
+  "Meloidogyne incognita" = "#7f7f7f",  # Gray
+  "tomato spotted wilt virus" = "#bcbd22",  # Yellow-green
+  "Erysiphe neolycopersici / Oidium neolycopersici-powdery mildew" = "#17becf",  # Cyan
+  "Botrytis cinerea" = "#ff9896",  # Light Red
+  "drought stress" = "#c5b0d5"  # Lavender
+)
+
+# Calculate the percentage variance explained by PC1 and PC2
+variance_vst <- summary(pca_results)$importance[2, 1:2] * 100
+
+# PCA plot for VST-transformed data
+# PCA plot for VST-transformed data with constrained ellipses
+ggplot(pca_data, aes(x = PC1, y = PC2)) +
+  geom_point(aes(color = metadata$pathogen, shape = metadata$interaction), size = 2) +  
+  geom_mark_ellipse(aes(color = metadata$pathogen), alpha = 0.2, label.fill = NA) + 
+  coord_cartesian(xlim = c(-300, 300), ylim = c(-200, 200)) +  # Adjust the limits to fit the ellipses
+  labs(
+    title = "PCA Plot of VST Data",
+    x = paste0("PC1 (", round(variance_vst[1], 2), "%)"),
+    y = paste0("PC2 (", round(variance_vst[2], 2), "%)"),
+    color = "Pathogen",
+    shape = "Interaction"
+  ) +
+  scale_color_manual(values = pathogen_colors) +  
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(size = 12),
+    axis.title = element_text(size = 10),
+    axis.text = element_text(size = 8)
+  )
+```
+
+# WGCNA
+
+```{r setting up the WGCNA data}
+options(stringsAsFactors = FALSE);
+disableWGCNAThreads()
+wgcna_data=assay(vsd)
+dim(wgcna_data)
+gene.names=rownames(wgcna_data)
+wgcna_data = t(wgcna_data)  # Transpose
+n=500;datExpr=wgcna_data[,1:n]
+dim(datExpr)
+SubGeneNames=gene.names[1:n]
+```
+
+# goodsamples and goodgenes
+
+```{r checking if there is good samples and good genes and removing the bad genes}
+multiExpr = list()
+multiExpr[[1]] = list(data = datExpr)
+
+# Now check for good samples and genes
+gsg = goodSamplesGenesMS(multiExpr, verbose = 3)
+
+if (!gsg$allOK) {
+  if (sum(!gsg$goodGenes) > 0) {
+    printFlush(paste("Removing genes:", paste(names(multiExpr[[1]]$data)[!gsg$goodGenes], collapse = ", ")))
+  }
+  if (sum(!gsg$goodSamples[[1]]) > 0) {
+    printFlush(paste("Removing samples:", paste(rownames(multiExpr[[1]]$data)[!gsg$goodSamples[[1]]], collapse = ", ")))
+  }
+  
+  # Remove bad genes and samples
+  multiExpr[[1]]$data = multiExpr[[1]]$data[gsg$goodSamples[[1]], gsg$goodGenes]
+}
+# Update datExpr if you want to work with a single dataset format again
+datExpr = multiExpr[[1]]$data
+```
+
+# setting power
+
+```{r setting the power and skipping by 1}
+powers = c(c(1:10), seq(from = 12, to=20, by=1));
+sft=pickSoftThreshold(datExpr,dataIsExpr = TRUE,powerVector = powers,corFnc = cor,corOptions = list(use = 'p'),networkType = "unsigned")
+```
+
+# scale independence and mean connectivity
+
+```{r plot the scale independce and the mean}
+# Plot the results
+sizeGrWindow(9, 5)
+par(mfrow = c(1,2));
+cex1 = 0.9;
+
+# Scale-free topology fit index as a function of the soft-thresholding power
+plot(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],xlab="Soft Threshold (power)",ylab="Scale Free Topology Model Fit, signed R^2",type="n", main = paste("Scale independence"));
+text(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],labels=powers,cex=cex1,col="red");
+
+# Red line corresponds to using an R^2 cut-off
+abline(h=0.80,col="red")
+
+# Mean connectivity as a function of the soft-thresholding power
+plot(sft$fitIndices[,1], sft$fitIndices[,5],xlab="Soft Threshold (power)",ylab="Mean Connectivity", type="n",main = paste("Mean connectivity"))
+text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=cex1,col="red")
+```
+
+# Soft threshold
+
+```{r based on the scale independce setting the soft threshold and setting the TOM data}
+softPower = 10;
+
+#calclute the adjacency matrix
+adj= adjacency(datExpr,type = "unsigned", power = softPower);
+
+#turn adjacency matrix into topological overlap to minimize the effects of noise and spurious associations
+TOM=TOMsimilarityFromExpr(datExpr,networkType = "unsigned", TOMType = "unsigned", power = softPower);
+SubGeneNames <- rownames(datExpr)[1:463]  # Or whatever subset of genes was used
+colnames(TOM) <- rownames(TOM) <- SubGeneNames
+colnames(TOM) =rownames(TOM) =SubGeneNames
+dissTOM=1-TOM
+```
+
+# Cluster plot without modules
+
+```{r plotted the cluster to see the branches}
+#hierarchical clustering of the genes based on the TOM dissimilarity measure
+geneTree = flashClust(as.dist(dissTOM),method="average");
+
+#plot the resulting clustering tree (dendrogram)
+plot(geneTree, xlab="", sub="",cex=0.3);
+# Set the minimum module size
+minModuleSize = 20;
+
+```
+# Module numbers
+
+```{r no of modules}
+#dynamicMods = cutreeDynamic(dendro = geneTree,  method="tree", minClusterSize = minModuleSize);
+dynamicMods = cutreeDynamic(dendro = geneTree, distM = dissTOM, method="hybrid", deepSplit = 2, pamRespectsDendro = FALSE, minClusterSize = minModuleSize);
+
+#the following command gives the module labels and the size of each module. Lable 0 is reserved for unassigned genes
+table(dynamicMods)
+```
+
+# Module colours
+
+```{r no opf genes in each modules}
+#Plot the module assignment under the dendrogram; note: The grey color is reserved for unassigned genes
+dynamicColors = labels2colors(dynamicMods)
+table(dynamicColors)
+```
+
+# Module identification
+
+```{r getting different modules}
+plotDendroAndColors(geneTree, dynamicColors, "Dynamic Tree Cut", dendroLabels = FALSE, hang = 0.03, addGuide = TRUE, guideHang = 0.05, main = "Gene dendrogram and module colors")
+```
+
+# Module without grey
+
+```{r discarding the unassigned genes}
+restGenes= (dynamicColors != "grey")
+diss1=1-TOMsimilarityFromExpr(datExpr[,restGenes], power = softPower)
+colnames(diss1) =rownames(diss1) =SubGeneNames[restGenes]
+hier1=flashClust(as.dist(diss1), method="average" )
+plotDendroAndColors(hier1, dynamicColors[restGenes], "Dynamic Tree Cut", dendroLabels = FALSE, hang = 0.03, addGuide = TRUE, guideHang = 0.05, main = "Gene dendrogram and module colors")
+```
+
+# The TOM plot with diagonal
+
+```{r Plotting the TOM}
+diss1=1-TOMsimilarityFromExpr(datExpr, power = softPower)
+colnames(diss1) =rownames(diss1) =SubGeneNames
+hier1=flashClust(as.dist(diss1), method="average" )
+#set the diagonal of the dissimilarity to NA 
+diag(diss1) = NA;
+
+#Visualize the Tom plot. 
+sizeGrWindow(7,7)
+TOMplot(diss1, hier1, as.character(dynamicColors))
+```
+
+# The TOM plot without the grey module
+
+```{r Plotting the TOM without the grey module}
+restGenes= (dynamicColors != "grey")
+diss1=1-TOMsimilarityFromExpr(datExpr[,restGenes], power = softPower)
+colnames(diss1) =rownames(diss1) =SubGeneNames[restGenes]
+hier1=flashClust(as.dist(diss1), method="average" )
+#set the diagonal of the dissimilarity to NA 
+diag(diss1) = NA;
+
+#Visualize the Tom plot. Raise the dissimilarity matrix to the power of 4 to bring out the module structure
+sizeGrWindow(7,7)
+TOMplot(diss1, hier1, as.character(dynamicColors[restGenes]))
+```
+# Extracting the modules
+
+```{r for every module, a .txt is generated}
+module_colors = unique(dynamicColors)
+for (color in module_colors) {
+  module = SubGeneNames[which(dynamicColors == color)]
+  write.table(
+    module, 
+    paste("module_", color, ".txt", sep = ""), 
+    sep = "\t", 
+    row.names = FALSE, 
+    col.names = FALSE, 
+    quote = FALSE
+  )
+}
+```
+
+# Expression patterns when they are clustered
+
+```{r cluster plot of all the modules}
+module.order <- unlist(tapply(1:ncol(datExpr),as.factor(dynamicColors),I))
+m<-t(t(datExpr[,module.order])/apply(datExpr[,module.order],2,max))
+heatmap(t(m),zlim=c(0,1),col=gray.colors(100),Rowv=NA,Colv=NA,labRow=NA,scale="none",RowSideColors=dynamicColors[module.order])
+```
+
+# Quantify module
+
+```{r quantify the modules}
+MEList = moduleEigengenes(datExpr, colors = dynamicColors)
+MEs = MEList$eigengenes
+plotEigengeneNetworks(MEs, "", marDendro = c(0,4,1,2), marHeatmap = c(3,4,1,2))
+```
