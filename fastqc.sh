@@ -2,9 +2,9 @@
 export PATH=$PATH:/dss/dsshome1/08/ge85jek2/miniconda3/envs/ncbi/bin
 
 # Directory containing the trimmed FASTQ files
-input_dir="/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/vaishnavi_masterthesis/trimmed"
+input_dir="vaishnavi/vaishnavi_masterthesis/trimmed"
 # Output directory for FastQC reports
-output_dir="/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/vaishnavi_masterthesis/fastqc_trimmed_results"
+output_dir="vaishnavi/vaishnavi_masterthesis/fastqc_trimmed_results"
 
 # Ensure output directory exists
 mkdir -p "$output_dir"
