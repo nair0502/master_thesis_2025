@@ -9,10 +9,10 @@ library(tidyverse)
 library(readr)
 
 # --- Fixed paths ---
-term2gene_file <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/module_files/solanum_proteins.results.txt"
-wgcna_module_dir <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/module_files"
-louvain_dir <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/genie3_res"
-output_base_dir <- "/dss/dssfs03/pn57ba/pn57ba-dss-0001/computational-plant-biology/vaishnavi/thesis/vaishhnavi_master-thesis/enrichment_louvain"
+term2gene_file <- "vaishnavi/thesis/vaishhnavi_master-thesis/module_files/solanum_proteins.results.txt"
+wgcna_module_dir <- "vaishnavi/thesis/vaishhnavi_master-thesis/module_files"
+louvain_dir <- "vaishnavi/thesis/vaishhnavi_master-thesis/genie3_res"
+output_base_dir <- "/vaishnavi/thesis/vaishhnavi_master-thesis/enrichment_louvain"
 
 # --- Function to clean gene IDs ---
 clean_gene_ids <- function(gene_vec) {
