@@ -1,6 +1,6 @@
 #!/bin/bash
 # Add fastp to PATH
-export PATH=$PATH:/dss/dsshome1/08/ge85jek2/miniconda3/envs/ncbi/bin
+export PATH=$PATH:/miniconda3/envs/ncbi/bin
 
 # Directory containing the FASTQ files
 input_dir="vaishnavi/vaishnavi_masterthesis/fastq"
